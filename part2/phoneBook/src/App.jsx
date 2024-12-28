@@ -3,12 +3,14 @@ import PersonForm from "./components/PersonForm";
 import Filter from "./components/Filter";
 import Person from "./components/Persons";
 import personService from "./services/persons";
+import Notification from "./components/Notification";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filter, setFilter] = useState("");
+  const [message, setMessage] = useState(null);
 
   // const [formState, setFormState] = useState({
   //   name: "",
@@ -61,13 +63,27 @@ const App = () => {
     if (isDup()) {
       const person = persons.find((person) => person.name === newName);
       const newPerson = { ...person, number: newNumber };
-      personService.updateExist(person.id, newPerson).then((response) => {
-        setPersons(
-          persons.map((person) =>
-            person.id === response.id ? response : person
-          )
-        );
-      });
+      personService
+        .updateExist(person.id, newPerson)
+        .then((response) => {
+          setPersons(
+            persons.map((person) =>
+              person.id === response.id ? response : person
+            )
+          );
+        })
+        .catch((error) => {
+          setMessage(
+            `information of ${person.name} has already been removed from server`
+          );
+          setTimeout(() => {
+            setMessage(null);
+          }, 5000);
+
+          personService.getAll().then((response) => {
+            setPersons(response);
+          });
+        });
       return;
     }
 
@@ -110,6 +126,8 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+
+      <Notification message={message} />
 
       <Filter handleFilter={handleFilter} />
 
