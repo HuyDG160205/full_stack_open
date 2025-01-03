@@ -6,7 +6,7 @@ import Filter from "./components/Filter";
 function App() {
   const [countries, setCountries] = useState([]);
   const [filter, setFilter] = useState("");
-  const [newContries, setNewContries] = useState([]);
+  const [newCountries, setNewCountries] = useState([]);
 
   useEffect(() => {
     countriesService
@@ -28,13 +28,22 @@ function App() {
           country.name.common.toLowerCase().includes(filter.toLowerCase())
         );
 
+  const handleShow = (name) => {
+    countriesService
+      .getCountry(name)
+      .then((response) => {
+        setFilter(response.name.common);
+      })
+      .catch((error) => console.log(error));
+  };
+
   return (
     <div>
       <Filter handleFilter={handleFilter} />
 
       <br />
 
-      <Countries countries={filtered} />
+      <Countries countries={filtered} handleShow={handleShow} />
     </div>
   );
 }

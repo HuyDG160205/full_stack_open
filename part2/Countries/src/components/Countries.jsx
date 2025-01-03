@@ -1,4 +1,14 @@
-const Countries = ({ countries }) => {
+const languages = (country) => {
+  return (
+    <ul>
+      {Object.values(country.languages).map((language) => (
+        <li key={language}>{language}</li>
+      ))}
+    </ul>
+  );
+};
+
+const Countries = ({ countries, handleShow }) => {
   if (countries.length == 0) {
     return <div>Too many matches, specify another filter</div>;
   }
@@ -8,7 +18,11 @@ const Countries = ({ countries }) => {
       <div>
         <h1>{countries[0].name.common}</h1>
         <p>capital {countries[0].capital}</p>
-        <p>population {countries[0].population}</p>
+        <p>area {countries[0].area}</p>
+
+        <h2>languages</h2>
+        {languages(countries[0])}
+
         <img src={countries[0].flags.png} alt="" />
       </div>
     );
@@ -18,7 +32,12 @@ const Countries = ({ countries }) => {
     <div>
       <ul>
         {countries.map((country) => (
-          <li key={country.name.common}>{country.name.common}</li>
+          <li key={country.name.common}>
+            {country.name.common}
+            <button onClick={() => handleShow(country.name.common)}>
+              show
+            </button>
+          </li>
         ))}
       </ul>
     </div>
