@@ -1,5 +1,6 @@
-import express, { json } from "express";
-import morgan, { token } from "morgan";
+import express from "express";
+import morgan from "morgan";
+import cors from "cors";
 
 const app = express();
 
@@ -9,8 +10,9 @@ morgan.token("type", function (req, res) {
 
 app.use(express.json());
 app.use(
-  morgan(function (tokens, req, res) {
-    if (tokens.method(req, res) === "POST") {
+  morgan(
+    function (tokens, req, res) {
+      //if (tokens.method(req, res) === "POST") {
       return [
         tokens.method(req, res),
         tokens.url(req, res),
@@ -22,8 +24,11 @@ app.use(
         tokens["type"](req, res),
       ].join(" ");
     }
-  })
+    //}
+  )
 );
+app.use(cors());
+app.use(express.static("dist"));
 
 let persons = [
   {
@@ -78,8 +83,13 @@ app.get("/api/persons/:id", (req, res) => {
 
 app.delete("/api/persons/:id", (req, res) => {
   let id = req.params.id;
-  persons = persons.filter((person) => person.id !== id);
-  res.status(204).end();
+  const index = persons.findIndex((person) => person.id === id);
+  if (index >= 0) {
+    persons.splice(index, 1);
+    res.status(204).end();
+  } else {
+    res.status(404).end();
+  }
 });
 
 app.post("/api/persons", (req, res) => {
@@ -99,14 +109,40 @@ app.post("/api/persons", (req, res) => {
 
   const person = {
     ...body,
-    id: generateId(),
+    id: generateId().toString(),
   };
 
   persons = persons.concat(person);
   res.json(person);
 });
 
-const PORT = 3001;
+app.put("/api/persons/:id", (req, res) => {
+  const id = req.params.id;
+  const body = req.body;
+
+  const person = persons.find((person) => person.id === id);
+
+  if (!person) {
+    return res.status(404).end();
+  }
+
+  const updatedPersons = {
+    ...person,
+    name: body.name,
+    number: body.number,
+  };
+
+  persons = persons.map((person) => {
+    if (person.id === id) {
+      return updatedPersons;
+    }
+    return person;
+  });
+
+  res.json(updatedPersons);
+});
+
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

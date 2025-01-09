@@ -5,7 +5,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon index.js",
-    "start": "node index.js"
+    "start": "node index.js",
+    "build:ui": "rm -rf dist && cd ../frontend && npm run build && cp -r dist ../backend",
+    "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push"
   },
   "type": "module",
   "keywords": [],
@@ -16,6 +18,7 @@
     "nodemon": "^3.1.9"
   },
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.21.2",
     "morgan": "^1.10.0"
   }

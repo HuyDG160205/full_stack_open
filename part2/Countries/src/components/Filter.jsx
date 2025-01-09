@@ -1,4 +1,7 @@
 const Filter = ({ handleFilter }) => {
+
+
+    
   return (
     <div>
       find countries

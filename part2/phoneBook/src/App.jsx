@@ -91,10 +91,10 @@ const App = () => {
       .create({
         name: newName,
         number: newNumber,
-        id: (persons.length + 1).toString(),
       })
       .then((response) => {
         setPersons(persons.concat(response));
+        console.log(response);
       });
 
     setNewName("");
