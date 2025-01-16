@@ -50,6 +50,36 @@ describe('blog list', () => {
     }
     await api.post('/api/blogs').send(newBlog).expect(400)
   })
+
+  test('a blog can be deleted', async () => {
+    const newBlog = {
+      title: 'React patterns',
+      author: 'Michael Chan',
+      url: 'https://reactpatterns.com/',
+      likes: 7,
+    }
+    const response = await api.post('/api/blogs').send(newBlog).expect(201)
+    const id = response.body.id
+    await api.delete(`/api/blogs/${id}`).expect(204)
+  })
+
+  test('blog can be updated', async () => {
+    const newBlog = {
+      title: 'React patterns',
+      author: 'Michael Chan',
+      url: 'https://reactpatterns.com/',
+      likes: 7,
+    }
+    const response = await api.post('/api/blogs').send(newBlog).expect(200)
+    const id = response.body.id
+    const updatedBlog = {
+      title: 'React patterns',
+      author: 'Michael Chan',
+      url: 'https://reactpatterns.com/',
+      likes: 8,
+    }
+    await api.put(`/api/blogs/${id}`).send(updatedBlog).expect(200)
+  })
 })
 
 after(async () => {

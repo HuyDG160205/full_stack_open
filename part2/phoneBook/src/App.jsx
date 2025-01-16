@@ -95,6 +95,12 @@ const App = () => {
       .then((response) => {
         setPersons(persons.concat(response));
         console.log(response);
+      })
+      .catch((error) => {
+        setMessage(error.response.data.error);
+        setTimeout(() => {
+          setMessage(null);
+        }, 5000);
       });
 
     setNewName("");
