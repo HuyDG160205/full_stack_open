@@ -1,12 +1,16 @@
 const supertest = require('supertest')
 const app = require('../app')
-const { test, describe, after } = require('node:test')
+const { test, describe, after, beforeEach } = require('node:test')
 const mongoose = require('mongoose')
 const assert = require('node:assert')
+const Blog = require('../models/blog')
 
 const api = supertest(app)
 
 describe('blog list', () => {
+  beforeEach(async () => {
+    await Blog.deleteMany({})
+  })
   test('blog are returned as JSON', async () => {
     await api
       .get('/api/blogs')
