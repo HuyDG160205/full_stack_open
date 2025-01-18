@@ -17,6 +17,10 @@ blogRouter.post('/', async (request, response) => {
 
   const user = request.user
 
+  if (!user) {
+    return response.status(401).json({ error: 'unauthorized' })
+  }
+
   const blog = new Blog({
     title: request.body.title,
     author: request.body.author,
