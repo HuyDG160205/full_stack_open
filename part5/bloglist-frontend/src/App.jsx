@@ -5,6 +5,7 @@ import loginService from './services/login'
 import CreateNew from './components/CreateNew'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
+import LoginForm from './components/LoginForm'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -47,7 +48,12 @@ const App = () => {
       setTimeout(() => {
         setMessage(null)
       }, 5000)
-    } catch (exception) {}
+    } catch (exception) {
+      setMessage('Error while adding blog')
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000)
+    }
   }
 
   const Remove = async (id) => {
@@ -81,33 +87,15 @@ const App = () => {
     setBlogs(blogs.map((b) => (b.id !== updatedBlog.id ? b : updatedBlog)))
   }
 
-  const loginForm = () => (
-    <form onSubmit={handleLogin}>
-      <div>
-        username
-        <input
-          id="username"
-          type="text"
-          value={username}
-          name="Username"
-          onChange={({ target }) => setUsername(target.value)}
-        />
-      </div>
-      <div>
-        password
-        <input
-          id="password"
-          type="password"
-          value={password}
-          name="Password"
-          onChange={({ target }) => setPassword(target.value)}
-        />
-      </div>
-      <button id="login-button" type="submit">
-        login
-      </button>
-    </form>
-  )
+  // const loginForm = () => (
+  //   <loginForm
+  //     handleUsernameChange={({ target }) => setUsername(target.value)}
+  //     handlePasswordChange={({ target }) => setPassword(target.value)}
+  //     handleSubmit={handleLogin}
+  //     username={username}
+  //     password={password}
+  //   />
+  // )
 
   const handleLogout = () => {
     window.localStorage.removeItem('loggedBlogappUser')
@@ -116,9 +104,20 @@ const App = () => {
 
   return (
     <div>
-      <h2>blogs</h2>
+      <h1>blogs</h1>
       <Notification message={message} />
-      {!user && loginForm()}
+      {/* if user is not logged in */}
+      {!user && (
+        <LoginForm
+          handleUsernameChange={({ target }) => setUsername(target.value)}
+          handlePasswordChange={({ target }) => setPassword(target.value)}
+          handleSubmit={handleLogin}
+          username={username}
+          password={password}
+        />
+      )}
+
+      {/* if user is logged in */}
       {user && (
         <div>
           <p>{user.name} logged in</p>
