@@ -1,5 +1,5 @@
 import { useState } from 'react'
-const Blog = ({ blog, updateLikesBlogs, removeThisBlog }) => {
+const Blog = ({ blog, updateLikesBlogs, removeThisBlog, user }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -28,26 +28,30 @@ const Blog = ({ blog, updateLikesBlogs, removeThisBlog }) => {
   }
 
   return (
-    <div style={blogStyle}>
+    <div style={blogStyle} className="blog">
       <button onClick={toggleVisibility}>View</button>
-      <div style={hideWhenVisible} className="blogFirst">
+      {!visible && (
         <div>
           {blog.title} {blog.author}
         </div>
-      </div>
+      )}
 
-      <div style={showWhenVisible} className="blogSecond">
+      {visible && (
         <div>
-          {blog.title} {blog.author}
+          <div>
+            {blog.title} {blog.author}
+          </div>
+          <div>{blog.url}</div>
+          <div>
+            {blog.likes} likes
+            <button onClick={updateLikes}>like</button>
+          </div>
+          <div>{blog.user.name}</div>
+          {user.username === blog.user.username && (
+            <button onClick={removeBlog}>Remove</button>
+          )}
         </div>
-        <div>{blog.url}</div>
-        <div>
-          {blog.likes} likes
-          <button onClick={updateLikes}>like</button>
-        </div>
-        <div>{blog.user.name}</div>
-        <button onClick={removeBlog}>Remove</button>
-      </div>
+      )}
     </div>
   )
 }

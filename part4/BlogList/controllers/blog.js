@@ -43,6 +43,9 @@ blogRouter.delete('/:id', async (request, response) => {
   }
 
   const user = request.user
+  if (!user) {
+    return response.status(401).json({ error: 'unauthorized' })
+  }
 
   if (blog.user.toString() !== user.id.toString()) {
     return response.status(401).json({ error: 'unauthorized' })
@@ -50,18 +53,34 @@ blogRouter.delete('/:id', async (request, response) => {
 
   await Blog.findByIdAndDelete(request.params.id)
 
-  response.status(204).json({ message: 'blog deleted' })
+  response.status(200).json({ message: 'blog deleted' })
 })
 
 blogRouter.put('/:id', async (request, response) => {
   const body = request.body
-  const blog = {
+  const blog = await Blog.findById(request.params.id)
+  if (!blog) {
+    return response.status(404).json({ error: 'blog not found' })
+  }
+
+  const user = request.user
+  if (!user) {
+    return response.status(401).json({ error: 'unauthorized' })
+  }
+
+  // if (blog.user.toString() !== user.id.toString()) {
+  //   return response.status(401).json({ error: 'unauthorized' })
+  // }
+  //*this is not supposed to be here lmao
+
+  const newBlog = {
     title: body.title,
     author: body.author,
     url: body.url,
     likes: body.likes,
   }
-  const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, {
+
+  const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, newBlog, {
     new: true,
   })
   response.status(200).json(updatedBlog)

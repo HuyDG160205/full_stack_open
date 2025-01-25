@@ -84,6 +84,20 @@ describe('blog list', () => {
   })
 
   test('failed adding a blog', async () => {
+    const newBlog = {
+      title: 'React patterns',
+      author: 'Michael Chan',
+      url: 'https://reactpatterns.com/',
+      likes: 7,
+    }
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .set('Authorization', `asdzxc`)
+      .expect(401)
+  })
+
+  test('a blog can be deleted', async () => {
     const user = {
       username: 'mluukkai',
       password: 'salainen',
@@ -97,24 +111,19 @@ describe('blog list', () => {
       url: 'https://reactpatterns.com/',
       likes: 7,
     }
-    await api
+    const response2 = await api
       .post('/api/blogs')
       .send(newBlog)
-      .set('Authorization', `asdzxc`)
-      .expect(400)
-  })
+      .set('Authorization', `Bearer ${response.body.token}`)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
 
-  // test('a blog can be deleted', async () => {
-  //   const newBlog = {
-  //     title: 'React patterns',
-  //     author: 'Michael Chan',
-  //     url: 'https://reactpatterns.com/',
-  //     likes: 7,
-  //   }
-  //   const response = await api.post('/api/blogs').send(newBlog).expect(201)
-  //   const id = response.body.id
-  //   await api.delete(`/api/blogs/${id}`).expect(204)
-  // })
+    const id = response2.body.id
+    await api
+      .delete(`/api/blogs/${id}`)
+      .set('Authorization', `Bearer ${response.body.token}`)
+      .expect(200)
+  })
 
   // test('blog can be updated', async () => {
   //   const newBlog = {

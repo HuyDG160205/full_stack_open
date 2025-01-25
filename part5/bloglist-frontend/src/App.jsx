@@ -77,7 +77,7 @@ const App = () => {
   }, [])
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs.sort(compareLikes)))
+    blogService.getAll().then((blogs) => setBlogs(blogs))
   }, [])
 
   const compareLikes = (b1, b2) => b2.likes - b1.likes
@@ -127,12 +127,13 @@ const App = () => {
           </Togglable>
 
           <button onClick={handleLogout}>logout</button>
-          {blogs.map((blog) => (
+          {blogs.sort(compareLikes).map((blog) => (
             <Blog
               key={blog.id}
               blog={blog}
               updateLikesBlogs={updateLikes}
               removeThisBlog={Remove}
+              user={user}
             />
           ))}
         </div>
