@@ -1,4 +1,6 @@
+import PropTypes from 'prop-types'
 import { useDispatch, useSelector } from 'react-redux'
+import { vote } from '../reducers/anecdoteReducer'
 
 const Anecdote = ({ anec, handleClick }) => {
   const { id, content, votes } = anec
@@ -13,25 +15,33 @@ const Anecdote = ({ anec, handleClick }) => {
   )
 }
 
-// const vote = (id) => {
-//   const dispatch = useDispatch()
-//   dispatch({ type: 'VOTE', data: { id } })
-// }
+Anecdote.propTypes = {
+  anec: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    content: PropTypes.string.isRequired,
+    votes: PropTypes.number.isRequired,
+  }).isRequired,
+  handleClick: PropTypes.func.isRequired,
+}
 
 const compare = (a, b) => b.votes - a.votes
 
 const AnecdoteList = () => {
-  const anecdotes = useSelector((state) => state)
+  const anecdotes = useSelector(({ filter, anecdotes }) =>
+    anecdotes.filter((anecdote) =>
+      anecdote.content.toLowerCase().includes(filter.toLowerCase())
+    )
+  )
 
   const dispatch = useDispatch()
 
   const handleClick = (id) => {
-    dispatch({ type: 'VOTE', data: { id } })
+    dispatch(vote(id))
   }
 
   return (
     <ul>
-      {anecdotes.sort(compare).map((anecdote) => (
+      {[...anecdotes].sort(compare).map((anecdote) => (
         <Anecdote
           key={anecdote.id}
           anec={anecdote}
