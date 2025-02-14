@@ -136,6 +136,7 @@ const resolvers = {
     editAuthor: (_, args) => {
       const author = authors.find((author) => author.name === args.name)
       if (!author) return null
+
       author.born = args.setBornTo
       return author
     },
